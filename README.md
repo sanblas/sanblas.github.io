@@ -1,106 +1,139 @@
-# SERPOAN Tracker
+# SERPOAN GitHub Tracker
 
-Redirector HTTP para emails y QR:
+Redirector estático para GitHub Pages + registro de estadísticas en Google Sheets.
 
-1. Cloudflare Worker recibe el clic.
-2. Consulta/cachea el destino configurado en Google Sheets.
-3. Devuelve un HTTP 302 real.
-4. Registra el evento en Google Sheets en segundo plano.
-
-## Parámetros
-
-- `camp`: campaña, p.ej. `TOUR26`
-- `lang`: `ES` / `EN`
-- `action`: `info`, `whatsapp`, etc.
-- `source`: `EMAIL`, `ASCENSOR_01`, ...
-- `variant`: `A`, `B` (opcional)
-- `id`: identificador opaco (opcional)
-- `event`: si se omite, será `qr` para `ASCENSOR_*` y `click` para el resto
-
-Ejemplo:
+## Arquitectura
 
 ```text
-https://TU-WORKER.workers.dev/?camp=TOUR26&lang=ES&action=whatsapp&source=EMAIL&id=A8K92P
+Email / QR
+   ↓
+GitHub Pages
+   ├─ resuelve destino desde config.js
+   ├─ envía evento a Apps Script (best-effort)
+   └─ location.replace()
+          ↓
+      web / WhatsApp
 ```
 
-## 1. Google Apps Script
+GitHub Pages no es un servidor dinámico: el redirect se realiza con JavaScript.
 
-Reemplaza el código del Web App por `appscript/Code.gs`.
+## Archivos
 
-Edita:
+- `index.html`: página mínima.
+- `config.js`: campañas, idiomas, acciones, URLs y textos WhatsApp.
+- `tracker.js`: tracking + redirect.
+- `Code.gs`: receptor para Google Apps Script.
+- `.nojekyll`: publica los archivos tal cual.
+
+## 1. Configurar Apps Script
+
+En `Code.gs`, cambia:
 
 ```js
-SPREADSHEET_ID: 'PEGA_AQUI_EL_ID_DEL_GOOGLE_SHEET'
+const SPREADSHEET_ID = 'PEGA_AQUI_EL_ID_DEL_GOOGLE_SHEET';
 ```
 
-Crea una Script Property:
+La hoja `EVENTOS` debe tener:
 
 ```text
-TRACKER_SECRET = una-clave-larga-y-aleatoria
+FECHA_HORA
+CAMPAÑA
+IDIOMA
+EVENTO
+ACCION
+SOURCE
+VARIANT
+ID
+DESTINO_KEY
+URL_FINAL
+RESULTADO
+DETALLE
 ```
 
-Vuelve a desplegar la aplicación web.
+Vuelve a implementar el Web App después de cambiar el código.
 
-## 2. Cloudflare
-
-El `wrangler.jsonc` ya contiene la URL del Apps Script facilitada para este proyecto.
-
-No guardes `TRACKER_SECRET` en GitHub.
-
-Configúralo como secreto en Cloudflare:
-
-```bash
-npx wrangler secret put TRACKER_SECRET
-```
-
-O desde el dashboard de Cloudflare, en las variables/secrets del Worker.
-
-El valor debe ser exactamente el mismo que en Apps Script.
-
-## 3. GitHub / Cloudflare
-
-Sube este proyecto a GitHub.
-
-En Cloudflare:
-
-Workers & Pages -> Create application -> Import a repository
-
-Selecciona el repositorio y despliega.
-
-Cada push posterior a la rama de producción puede desplegar automáticamente.
-
-## 4. Pruebas
-
-Health:
+La URL incluida en `config.js` es:
 
 ```text
-https://TU-WORKER.workers.dev/health
+https://script.google.com/macros/s/AKfycbz3N01x7eP1km7SNnCwou0VAn26p82i8DQXoyOVweAVSTD4vuEGd4NnycdfGSgjF3wv/exec
 ```
 
-Debe devolver JSON con `ok: true`.
+## 2. Configurar destinos
 
-Resolver de Google:
+Edita `config.js`.
+
+WhatsApp ya incluye dos ejemplos ES/EN para `TOUR26`.
+
+Para una landing:
+
+```js
+{
+  camp: "TOUR26",
+  lang: "ES",
+  action: "info",
+  type: "URL",
+  url: "https://tu-destino.example/es"
+}
+```
+
+## 3. Subir a GitHub
+
+Crea un repositorio, por ejemplo:
 
 ```text
-https://script.google.com/macros/s/AKfycbz3N01x7eP1km7SNnCwou0VAn26p82i8DQXoyOVweAVSTD4vuEGd4NnycdfGSgjF3wv/exec?api=resolve&camp=TOUR26&lang=ES&action=info
+serpoan-tracker
 ```
 
-Debe devolver JSON con `ok: true` y una URL.
+Sube los archivos.
 
-Tracker:
+En GitHub:
 
 ```text
-https://TU-WORKER.workers.dev/?camp=TOUR26&lang=ES&action=info&source=ASCENSOR_01&variant=A
+Settings → Pages
+Build and deployment → Deploy from a branch
+Branch → main
+Folder → /(root)
+Save
 ```
 
-Debe:
-- redirigir al destino;
-- registrar una fila en `EVENTOS`.
+La URL quedará parecida a:
 
-## Caché
+```text
+https://TU-USUARIO.github.io/serpoan-tracker/
+```
 
-Los destinos se cachean 5 minutos (`CACHE_SECONDS = 300`).
+## 4. Ejemplos
 
-Esto permite editar Google Sheets sin tener que desplegar el Worker, pero evita consultar Apps Script en cada clic.
+Email a WhatsApp ES:
 
-Durante pruebas puedes bajar `CACHE_SECONDS` a `10`.
+```text
+https://TU-USUARIO.github.io/serpoan-tracker/?camp=TOUR26&lang=ES&action=whatsapp&source=EMAIL&id=A8K92P
+```
+
+Email a WhatsApp EN:
+
+```text
+https://TU-USUARIO.github.io/serpoan-tracker/?camp=TOUR26&lang=EN&action=whatsapp&source=EMAIL&id=A8K92P
+```
+
+Ascensor A:
+
+```text
+https://TU-USUARIO.github.io/serpoan-tracker/?camp=TOUR26&lang=ES&action=info&source=ASCENSOR_01&variant=A
+```
+
+Ascensor B:
+
+```text
+https://TU-USUARIO.github.io/serpoan-tracker/?camp=TOUR26&lang=ES&action=whatsapp&source=ASCENSOR_01&variant=B
+```
+
+## Importante sobre estadísticas
+
+El registro desde GitHub Pages es "best effort":
+
+- JavaScript debe estar habilitado.
+- El navegador o una extensión de privacidad puede bloquear la petición al logger.
+- No equivale a un registro de servidor garantizado.
+
+Para campañas y QR normales debería ser útil como métrica operativa, pero no debe tratarse como evidencia infalible de una acción.
