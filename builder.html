@@ -1,0 +1,917 @@
+<!doctype html>
+
+<html lang="es">
+
+<head>
+
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
+  <meta
+    name="robots"
+    content="noindex,nofollow"
+  >
+
+  <title>
+    Constructor de URLs SERPOAN
+  </title>
+
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+
+      margin: 0;
+
+      padding: 32px 18px;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+      background: #f6f6f4;
+
+      color: #222;
+
+    }
+
+
+    .container {
+
+      width: 100%;
+
+      max-width: 780px;
+
+      margin: 0 auto;
+
+    }
+
+
+    .card {
+
+      background: #fff;
+
+      border:
+        1px solid #e5e5e1;
+
+      border-radius: 16px;
+
+      padding: 28px;
+
+      box-shadow:
+        0 8px 28px
+        rgba(0, 0, 0, 0.05);
+
+    }
+
+
+    h1 {
+
+      margin:
+        0 0 8px;
+
+      font-size: 26px;
+
+    }
+
+
+    .intro {
+
+      margin:
+        0 0 28px;
+
+      color: #666;
+
+      line-height: 1.55;
+
+    }
+
+
+    .grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
+
+      gap: 18px;
+
+    }
+
+
+    .field {
+
+      min-width: 0;
+
+    }
+
+
+    .full {
+
+      grid-column:
+        1 / -1;
+
+    }
+
+
+    label {
+
+      display: block;
+
+      margin-bottom: 7px;
+
+      font-size: 13px;
+
+      font-weight: 600;
+
+    }
+
+
+    input,
+    select,
+    textarea,
+    button {
+
+      font: inherit;
+
+    }
+
+
+    input,
+    select,
+    textarea {
+
+      width: 100%;
+
+      min-height: 44px;
+
+      padding:
+        10px 12px;
+
+      border:
+        1px solid #d8d8d3;
+
+      border-radius: 8px;
+
+      background: #fff;
+
+      color: #222;
+
+    }
+
+
+    textarea {
+
+      min-height: 110px;
+
+      resize: vertical;
+
+    }
+
+
+    .help {
+
+      margin-top: 5px;
+
+      color: #777;
+
+      font-size: 12px;
+
+      line-height: 1.4;
+
+    }
+
+
+    .output {
+
+      margin-top: 26px;
+
+      padding-top: 24px;
+
+      border-top:
+        1px solid #e7e7e2;
+
+    }
+
+
+    .actions {
+
+      display: flex;
+
+      gap: 10px;
+
+      flex-wrap: wrap;
+
+      margin-top: 14px;
+
+    }
+
+
+    button,
+    .open-link {
+
+      min-height: 44px;
+
+      padding:
+        10px 18px;
+
+      border-radius: 8px;
+
+      text-decoration: none;
+
+      cursor: pointer;
+
+    }
+
+
+    button {
+
+      border: 0;
+
+      background: #222;
+
+      color: #fff;
+
+    }
+
+
+    .secondary {
+
+      background: #ecece8;
+
+      color: #222;
+
+    }
+
+
+    .open-link {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      background: #ecece8;
+
+      color: #222;
+
+    }
+
+
+    .status {
+
+      min-height: 22px;
+
+      margin-top: 10px;
+
+      font-size: 13px;
+
+      color: #555;
+
+    }
+
+
+    @media (
+      max-width: 640px
+    ) {
+
+      .grid {
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+
+      .full {
+
+        grid-column:
+          auto;
+
+      }
+
+
+      .card {
+
+        padding:
+          22px 18px;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<main class="container">
+
+
+<section class="card">
+
+
+<h1>
+  Constructor de URLs
+</h1>
+
+
+<p class="intro">
+
+  Genera enlaces para
+  sanblas.github.io.
+
+  El ID es interno:
+  se registra en EVENTOS
+  pero nunca se transmite
+  a Barceló.
+
+</p>
+
+
+<div class="grid">
+
+
+<div class="field full">
+
+<label for="baseUrl">
+URL base
+</label>
+
+<input
+  id="baseUrl"
+  type="url"
+  value="https://sanblas.github.io/"
+>
+
+</div>
+
+
+<div class="field">
+
+<label for="campaign">
+utm_campaign *
+</label>
+
+<input
+  id="campaign"
+  type="text"
+  placeholder="TOUR26"
+>
+
+<div class="help">
+Debe existir en CAMPAÑAS.
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label for="source">
+utm_source *
+</label>
+
+<input
+  id="source"
+  type="text"
+  placeholder="ASCENSOR_01"
+>
+
+</div>
+
+
+<div class="field">
+
+<label for="medium">
+utm_medium *
+</label>
+
+<input
+  id="medium"
+  type="text"
+  list="mediumOptions"
+  placeholder="qr"
+>
+
+<datalist id="mediumOptions">
+
+<option value="qr">
+
+<option value="email">
+
+<option value="internal">
+
+<option value="social">
+
+</datalist>
+
+</div>
+
+
+<div class="field">
+
+<label for="content">
+utm_content
+</label>
+
+<input
+  id="content"
+  type="text"
+  placeholder="A"
+>
+
+<div class="help">
+Variante, CTA, posición o creatividad.
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label for="term">
+utm_term *
+</label>
+
+<input
+  id="term"
+  type="text"
+  list="termOptions"
+  placeholder="reserva"
+>
+
+<datalist id="termOptions">
+
+<option value="info">
+
+<option value="reserva">
+
+<option value="whatsapp">
+
+<option value="material">
+
+<option value="consent">
+
+</datalist>
+
+<div class="help">
+Determina el destino junto con campaña e idioma.
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label for="lang">
+Idioma *
+</label>
+
+<select id="lang">
+
+<option value="ES">
+ES
+</option>
+
+<option value="EN">
+EN
+</option>
+
+</select>
+
+</div>
+
+
+<div class="field full">
+
+<label for="id">
+ID
+</label>
+
+<input
+  id="id"
+  type="text"
+  placeholder="Opcional"
+>
+
+<div class="help">
+Nunca se transfiere al destino.
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="output">
+
+
+<label for="result">
+URL generada
+</label>
+
+
+<textarea
+  id="result"
+  readonly
+></textarea>
+
+
+<div class="actions">
+
+
+<button
+  id="copyButton"
+  type="button"
+>
+
+Copiar URL
+
+</button>
+
+
+<button
+  id="clearButton"
+  type="button"
+  class="secondary"
+>
+
+Limpiar
+
+</button>
+
+
+<a
+  id="openLink"
+  class="open-link"
+  href="#"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+
+Probar enlace
+
+</a>
+
+
+</div>
+
+
+<div
+  id="status"
+  class="status"
+  aria-live="polite"
+></div>
+
+
+</div>
+
+
+</section>
+
+
+</main>
+
+
+<script>
+
+(() => {
+
+"use strict";
+
+
+const fields = {
+
+  baseUrl:
+    document.getElementById(
+      "baseUrl"
+    ),
+
+  campaign:
+    document.getElementById(
+      "campaign"
+    ),
+
+  source:
+    document.getElementById(
+      "source"
+    ),
+
+  medium:
+    document.getElementById(
+      "medium"
+    ),
+
+  content:
+    document.getElementById(
+      "content"
+    ),
+
+  term:
+    document.getElementById(
+      "term"
+    ),
+
+  lang:
+    document.getElementById(
+      "lang"
+    ),
+
+  id:
+    document.getElementById(
+      "id"
+    )
+
+};
+
+
+const result =
+  document.getElementById(
+    "result"
+  );
+
+
+const status =
+  document.getElementById(
+    "status"
+  );
+
+
+const openLink =
+  document.getElementById(
+    "openLink"
+  );
+
+
+const copyButton =
+  document.getElementById(
+    "copyButton"
+  );
+
+
+const clearButton =
+  document.getElementById(
+    "clearButton"
+  );
+
+
+Object
+  .values(fields)
+  .forEach(
+    field => {
+
+      field.addEventListener(
+        "input",
+        update
+      );
+
+      field.addEventListener(
+        "change",
+        update
+      );
+
+    }
+  );
+
+
+copyButton.addEventListener(
+  "click",
+  copyUrl
+);
+
+
+clearButton.addEventListener(
+  "click",
+  clearForm
+);
+
+
+update();
+
+
+
+function update() {
+
+  try {
+
+    const url =
+      new URL(
+        fields.baseUrl.value
+          .trim()
+      );
+
+
+    setParam(
+      url,
+      "utm_campaign",
+      fields.campaign.value
+    );
+
+
+    setParam(
+      url,
+      "utm_source",
+      fields.source.value
+    );
+
+
+    setParam(
+      url,
+      "utm_medium",
+      fields.medium.value
+    );
+
+
+    setParam(
+      url,
+      "utm_content",
+      fields.content.value
+    );
+
+
+    setParam(
+      url,
+      "utm_term",
+      fields.term.value
+    );
+
+
+    setParam(
+      url,
+      "lang",
+      fields.lang.value
+    );
+
+
+    setParam(
+      url,
+      "id",
+      fields.id.value
+    );
+
+
+    result.value =
+      url.toString();
+
+
+    openLink.href =
+      url.toString();
+
+
+    const missing =
+      !fields.campaign.value.trim() ||
+      !fields.source.value.trim() ||
+      !fields.medium.value.trim() ||
+      !fields.term.value.trim();
+
+
+    status.textContent =
+      missing
+        ? "Completa los campos marcados con *."
+        : "URL válida.";
+
+
+  } catch (_) {
+
+    result.value = "";
+
+    openLink.href = "#";
+
+    status.textContent =
+      "URL base no válida.";
+
+  }
+
+}
+
+
+
+function setParam(
+  url,
+  key,
+  value
+) {
+
+  const clean =
+    String(
+      value || ""
+    ).trim();
+
+
+  if (clean) {
+
+    url.searchParams.set(
+      key,
+      clean
+    );
+
+  } else {
+
+    url.searchParams.delete(
+      key
+    );
+
+  }
+
+}
+
+
+
+async function copyUrl() {
+
+  const value =
+    result.value.trim();
+
+
+  if (!value) {
+
+    return;
+
+  }
+
+
+  try {
+
+    await navigator.clipboard
+      .writeText(
+        value
+      );
+
+
+    status.textContent =
+      "URL copiada.";
+
+
+  } catch (_) {
+
+    result.focus();
+
+    result.select();
+
+
+    document.execCommand(
+      "copy"
+    );
+
+
+    status.textContent =
+      "URL copiada.";
+
+  }
+
+}
+
+
+
+function clearForm() {
+
+  fields.campaign.value = "";
+
+  fields.source.value = "";
+
+  fields.medium.value = "";
+
+  fields.content.value = "";
+
+  fields.term.value = "";
+
+  fields.lang.value = "ES";
+
+  fields.id.value = "";
+
+
+  update();
+
+
+  fields.campaign.focus();
+
+}
+
+
+})();
+
+</script>
+
+
+</body>
+
+</html>
