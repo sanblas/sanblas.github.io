@@ -1,14 +1,50 @@
 <!doctype html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="robots" content="noindex,nofollow">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
+  <meta
+    name="robots"
+    content="noindex,nofollow"
+  >
+
+  <!--
+    Fallback:
+    si JavaScript no redirige,
+    después de 5 segundos se envía al usuario a Barceló.
+  -->
+  <meta
+    http-equiv="refresh"
+    content="5;url=https://www.barcelo.com/"
+  >
+
   <title>Redirigiendo…</title>
 </head>
+
 <body>
-  <noscript>Este enlace necesita JavaScript para continuar.</noscript>
+
+  <p>
+    Redirigiendo…
+  </p>
+
+  <noscript>
+    <p>
+      Si no eres redirigido automáticamente,
+      <a href="https://www.barcelo.com/">
+        continúa a Barceló
+      </a>.
+    </p>
+  </noscript>
+
   <script src="./config.js"></script>
   <script src="./tracker.js"></script>
+
 </body>
+
 </html>
