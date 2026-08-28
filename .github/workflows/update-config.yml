@@ -1,0 +1,107 @@
+name: Actualizar configuración SERPOAN
+
+on:
+  schedule:
+    - cron: '17 */2 * * *'
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-config:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Descargar configuración desde Apps Script
+        run: |
+          curl -L --fail --silent --show-error \
+          "https://script.google.com/macros/s/AKfycbz3N01x7eP1km7SNnCwou0VAn26p82i8DQXoyOVweAVSTD4vuEGd4NnycdfGSgjF3wv/exec?api=config" \
+          -o config-temp.json
+
+      - name: Validar configuración
+        run: |
+          python - <<'PY'
+          import json
+
+          with open("config-temp.json", "r", encoding="utf-8") as f:
+              data = json.load(f)
+
+          if data.get("ok") is not True:
+              raise SystemExit(
+                  "Apps Script devolvió un error: "
+                  + str(data.get("error", "error desconocido"))
+              )
+
+          print("Configuración válida")
+          print("Generada:", data.get("generatedAt"))
+          print("Destinos:", len(data.get("destinations", [])))
+
+          warnings = data.get("warnings", [])
+
+          if warnings:
+              print("Advertencias:")
+              for warning in warnings:
+                  print("-", warning)
+          PY
+
+      - name: Generar serpoan-tracker/config.js
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          with open("config-temp.json", "r", encoding="utf-8") as f:
+              data = json.load(f)
+
+          # Adaptamos la respuesta del Apps Script
+          # al formato utilizado por tracker.js
+          config = {
+              "generatedAt": data.get("generatedAt"),
+              "version": data.get("version"),
+              "destinations": data.get("destinations", [])
+          }
+
+          output = (
+              "/* AUTO-GENERADO POR GITHUB ACTIONS\n"
+              " * No editar manualmente.\n"
+              " */\n\n"
+              "window.SERPOAN_CONFIG = "
+              + json.dumps(
+                  config,
+                  ensure_ascii=False,
+                  indent=2
+              )
+              + ";\n"
+          )
+
+          path = Path("serpoan-tracker/config.js")
+          path.parent.mkdir(parents=True, exist_ok=True)
+          path.write_text(output, encoding="utf-8")
+
+          print("Generado:", path)
+          PY
+
+      - name: Eliminar archivo temporal
+        run: |
+          rm -f config-temp.json
+
+      - name: Guardar cambios
+        run: |
+          git config user.name "SERPOAN Bot"
+          git config user.email "actions@users.noreply.github.com"
+
+          git add serpoan-tracker/config.js
+
+          if git diff --cached --quiet; then
+            echo "No hay cambios en config.js"
+            exit 0
+          fi
+
+          git commit -m "Actualizar configuración SERPOAN"
+          git push
