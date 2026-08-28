@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
@@ -40,6 +39,7 @@ jobs:
 
           print("Configuración válida")
           print("Generada:", data.get("generatedAt"))
+          print("Versión:", data.get("version"))
           print("Destinos:", len(data.get("destinations", [])))
 
           warnings = data.get("warnings", [])
@@ -50,23 +50,27 @@ jobs:
                   print("-", warning)
           PY
 
-      - name: Generar serpoan-tracker/config.js
+      - name: Generar config.js
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
 
+          APPS_SCRIPT_URL = (
+              "https://script.google.com/macros/s/"
+              "AKfycbz3N01x7eP1km7SNnCwou0VAn26p82i8DQXoyOVweAVSTD4vuEGd4NnycdfGSgjF3wv"
+              "/exec"
+          )
+
           with open("config-temp.json", "r", encoding="utf-8") as f:
               data = json.load(f)
 
-          # Adaptamos la respuesta del Apps Script
-          # al formato utilizado por tracker.js
           config = {
-            "appsScriptUrl": "https://script.google.com/macros/s/AKfycbz3N01x7eP1km7SNnCwou0VAn26p82i8DQXoyOVweAVSTD4vuEGd4NnycdfGSgjF3wv/exec",
-            "fallbackUrl": "https://www.barcelo.com/",
-            "generatedAt": data.get("generatedAt"),
-            "version": data.get("version"),
-            "destinations": data.get("destinations", [])
+              "appsScriptUrl": APPS_SCRIPT_URL,
+              "fallbackUrl": "https://www.barcelo.com/",
+              "generatedAt": data.get("generatedAt"),
+              "version": data.get("version"),
+              "destinations": data.get("destinations", [])
           }
 
           output = (
@@ -82,28 +86,46 @@ jobs:
               + ";\n"
           )
 
-          path = Path("serpoan-tracker/config.js")
-          path.parent.mkdir(parents=True, exist_ok=True)
-          path.write_text(output, encoding="utf-8")
+          path = Path("config.js")
+
+          path.write_text(
+              output,
+              encoding="utf-8"
+          )
 
           print("Generado:", path)
           PY
+
+      - name: Mostrar config generado
+        run: |
+          echo "----- config.js -----"
+          cat config.js
+          echo "---------------------"
 
       - name: Eliminar archivo temporal
         run: |
           rm -f config-temp.json
 
-      - name: Guardar cambios
+      - name: Configurar Git
         run: |
           git config user.name "SERPOAN Bot"
           git config user.email "actions@users.noreply.github.com"
 
-          git add serpoan-tracker/config.js
+      - name: Comprobar cambios
+        id: changes
+        run: |
+          git add config.js
 
           if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No hay cambios en config.js"
-            exit 0
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Hay cambios en config.js"
           fi
 
+      - name: Guardar cambios
+        if: steps.changes.outputs.changed == 'true'
+        run: |
           git commit -m "Actualizar configuración SERPOAN"
           git push
