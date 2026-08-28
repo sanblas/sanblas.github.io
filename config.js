@@ -5,42 +5,32 @@
 window.SERPOAN_CONFIG = {
   "appsScriptUrl": "https://script.google.com/macros/s/AKfycbz3N01x7eP1km7SNnCwou0VAn26p82i8DQXoyOVweAVSTD4vuEGd4NnycdfGSgjF3wv/exec",
   "fallbackUrl": "https://www.barcelo.com/",
-  "generatedAt": "2026-08-28T10:17:41.024Z",
-  "version": "1.0.0",
+  "generatedAt": "2026-08-28T12:26:51.098Z",
+  "version": "2.0.0",
   "destinations": [
     {
-      "camp": "TOUR26",
+      "utm_campaign": "TOUR26",
       "lang": "ES",
-      "action": "info",
+      "utm_term": "info",
       "type": "URL",
       "url": "https://www.barcelo.com/guia-turismo/es/espana/tenerife/actividades/1121/",
       "destinationKey": "TOUR_INFO_ES"
     },
     {
-      "camp": "TOUR26",
+      "utm_campaign": "TOUR26",
       "lang": "EN",
-      "action": "info",
+      "utm_term": "info",
       "type": "URL",
       "url": "https://www.barcelo.com/guia-turismo/en/spain/tenerife/experiences/1121/",
       "destinationKey": "TOUR_INFO_EN"
     },
     {
-      "camp": "TOUR26",
+      "utm_campaign": "CONSENT26",
       "lang": "ES",
-      "action": "whatsapp",
-      "type": "WHATSAPP",
-      "url": "https://wa.me/34922097040",
-      "text": "Hola, estoy interesado/a en la visita guiada de San Blas Reserva Ambiental. ¿Podrían darme más información?",
-      "destinationKey": "WA_TOUR_ES"
-    },
-    {
-      "camp": "TOUR26",
-      "lang": "EN",
-      "action": "whatsapp",
-      "type": "WHATSAPP",
-      "url": "https://wa.me/34922097040",
-      "text": "Hello, I am interested in the guided tour at San Blas Reserva Ambiental. Could you give me more information?",
-      "destinationKey": "WA_TOUR_EN"
+      "utm_term": "consent",
+      "type": "URL",
+      "url": "https://docs.google.com/forms/d/e/1FAIpQLSe1UxO48Kh6TE_OdP64QBcsXivpfC0hX93GYGOLzKUyBZkayw/viewform",
+      "destinationKey": "CONSENT_ES"
     }
   ]
 };
