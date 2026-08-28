@@ -3,7 +3,9 @@
  */
 
 window.SERPOAN_CONFIG = {
-  "generatedAt": "2026-08-28T10:03:11.026Z",
+  "appsScriptUrl": "https://script.google.com/macros/s/AKfycbz3N01x7eP1km7SNnCwou0VAn26p82i8DQXoyOVweAVSTD4vuEGd4NnycdfGSgjF3wv/exec",
+  "fallbackUrl": "https://www.barcelo.com/",
+  "generatedAt": "2026-08-28T10:09:40.253Z",
   "version": "1.0.0",
   "destinations": [
     {
@@ -38,7 +40,7 @@ window.SERPOAN_CONFIG = {
       "type": "WHATSAPP",
       "url": "https://wa.me/34922097040",
       "text": "Hello, I am interested in the guided tour at San Blas Reserva Ambiental. Could you give me more information?",
-      "destinationKey": "WA_TOUR_ES"
+      "destinationKey": "WA_TOUR_EN"
     }
   ]
 };
