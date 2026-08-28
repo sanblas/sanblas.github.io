@@ -62,9 +62,11 @@ jobs:
           # Adaptamos la respuesta del Apps Script
           # al formato utilizado por tracker.js
           config = {
-              "generatedAt": data.get("generatedAt"),
-              "version": data.get("version"),
-              "destinations": data.get("destinations", [])
+            "appsScriptUrl": "https://script.google.com/macros/s/AKfycbz3N01x7eP1km7SNnCwou0VAn26p82i8DQXoyOVweAVSTD4vuEGd4NnycdfGSgjF3wv/exec",
+            "fallbackUrl": "https://www.barcelo.com/",
+            "generatedAt": data.get("generatedAt"),
+            "version": data.get("version"),
+            "destinations": data.get("destinations", [])
           }
 
           output = (
