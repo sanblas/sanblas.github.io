@@ -1,119 +1,173 @@
 (() => {
   "use strict";
 
-  const cfg = window.SERPOAN_CONFIG || {};
-  const params = new URLSearchParams(window.location.search);
 
-  const FALLBACK_DELAY = 5000;
-
-  const fallbackUrl =
-    clean(cfg.fallbackUrl) ||
-    "https://www.barcelo.com/";
-
-  /*
-   * Parámetros internos del tracker
-   */
-  const camp =
-    clean(params.get("camp"))
-      .toUpperCase();
-
-  const lang =
-    (clean(params.get("lang")) || "ES")
-      .toUpperCase();
-
-  const action =
-    clean(params.get("action"))
-      .toLowerCase();
-
-  const source =
-    clean(params.get("source"))
-      .toUpperCase();
-
-  const variant =
-    clean(params.get("variant"))
-      .toUpperCase();
-
-  const id =
-    clean(params.get("id"))
-      .slice(0, 100);
-
-  let event =
-    clean(params.get("event"))
-      .toLowerCase();
+  const cfg =
+    window.SERPOAN_CONFIG || {};
 
 
-  /*
-   * Evento automático:
-   *
-   * ASCENSOR_* = qr
-   * resto       = click
-   */
-  if (!event) {
-
-    event =
-      source.startsWith("ASCENSOR")
-        ? "qr"
-        : "click";
-
-  }
-
-
-  /*
-   * Si el enlace está incompleto,
-   * NO mostramos otra página.
-   *
-   * Dejamos la pantalla actual
-   * Redirigiendo / Redirecting
-   * y vamos al fallback.
-   */
-  if (!camp || !action) {
-
-    logEvent({
-      camp,
-      lang,
-      event,
-      action,
-      source,
-      variant,
-      id,
-      result: "ERROR",
-      detail: "Faltan camp o action"
-    });
-
-    startFallback();
-
-    return;
-  }
-
-
-  /*
-   * Buscar destino
-   */
-  const destination =
-    findDestination(
-      cfg.destinations || [],
-      camp,
-      lang,
-      action
+  const params =
+    new URLSearchParams(
+      window.location.search
     );
 
 
+  const FALLBACK_DELAY =
+    5000;
+
+
+  const fallbackUrl =
+    clean(
+      cfg.fallbackUrl
+    ) ||
+    "https://www.barcelo.com/";
+
+
+  /***************************************************
+   * UTM
+   ***************************************************/
+
+  const utmCampaign =
+    clean(
+      params.get(
+        "utm_campaign"
+      )
+    );
+
+
+  const utmSource =
+    clean(
+      params.get(
+        "utm_source"
+      )
+    );
+
+
+  const utmMedium =
+    clean(
+      params.get(
+        "utm_medium"
+      )
+    );
+
+
+  const utmContent =
+    clean(
+      params.get(
+        "utm_content"
+      )
+    );
+
+
+  const utmTerm =
+    clean(
+      params.get(
+        "utm_term"
+      )
+    );
+
+
+  const lang =
+    (
+      clean(
+        params.get(
+          "lang"
+        )
+      ) ||
+      "ES"
+    ).toUpperCase();
+
+
   /*
-   * Destino inexistente
+   * ID interno.
+   *
+   * Se registra,
+   * pero NUNCA se propaga.
    */
+
+  const id =
+    clean(
+      params.get(
+        "id"
+      )
+    ).slice(
+      0,
+      100
+    );
+
+
+  /***************************************************
+   * VALIDACIÓN
+   ***************************************************/
+
+  if (
+    !utmCampaign ||
+    !utmTerm
+  ) {
+
+    logEvent({
+
+      utmCampaign,
+      utmSource,
+      utmMedium,
+      utmContent,
+      utmTerm,
+      lang,
+      id,
+
+      result:
+        "ERROR",
+
+      detail:
+        "Faltan utm_campaign o utm_term"
+
+    });
+
+
+    startFallback();
+
+    return;
+  }
+
+
+  /***************************************************
+   * RESOLVER DESTINO
+   ***************************************************/
+
+  const destination =
+    findDestination(
+
+      cfg.destinations || [],
+
+      utmCampaign,
+
+      lang,
+
+      utmTerm
+
+    );
+
+
   if (!destination) {
 
     logEvent({
-      camp,
+
+      utmCampaign,
+      utmSource,
+      utmMedium,
+      utmContent,
+      utmTerm,
       lang,
-      event,
-      action,
-      source,
-      variant,
       id,
-      result: "ERROR",
-      detail: "Destino no configurado"
+
+      result:
+        "ERROR",
+
+      detail:
+        "Destino no configurado"
+
     });
+
 
     startFallback();
 
@@ -121,29 +175,36 @@
   }
 
 
-  /*
-   * Construir URL final
-   */
+  /***************************************************
+   * URL FINAL
+   ***************************************************/
+
   let finalUrl =
-    buildFinalUrl(destination);
+    buildFinalUrl(
+      destination
+    );
 
 
-  /*
-   * URL incorrecta
-   */
   if (!finalUrl) {
 
     logEvent({
-      camp,
+
+      utmCampaign,
+      utmSource,
+      utmMedium,
+      utmContent,
+      utmTerm,
       lang,
-      event,
-      action,
-      source,
-      variant,
       id,
-      result: "ERROR",
-      detail: "URL final inválida"
+
+      result:
+        "ERROR",
+
+      detail:
+        "URL final inválida"
+
     });
+
 
     startFallback();
 
@@ -151,63 +212,70 @@
   }
 
 
-  /*
-   * Añadir las UTM del enlace original
-   * al destino final.
+  /***************************************************
+   * PROPAGAR TODAS LAS UTM
    *
-   * Solo para destinos URL normales.
+   * SOLO URL normal.
    *
-   * No enviamos:
-   * id
-   * source
-   * variant
-   * camp
-   * lang
-   * action
-   *
-   * Solo parámetros que empiecen por utm_.
-   */
+   * id NO se propaga.
+   * lang NO se propaga.
+   ***************************************************/
+
   if (
-    clean(destination.type)
-      .toUpperCase() === "URL"
+    clean(
+      destination.type
+    ).toUpperCase() ===
+      "URL"
   ) {
 
     finalUrl =
-      preserveUtmParameters(finalUrl);
+      preserveUtmParameters(
+        finalUrl
+      );
 
   }
 
 
-  /*
-   * Registrar el evento.
-   */
+  /***************************************************
+   * REGISTRAR
+   ***************************************************/
+
   logEvent({
 
-    camp,
+    utmCampaign,
+    utmSource,
+    utmMedium,
+    utmContent,
+    utmTerm,
     lang,
-    event,
-    action,
-    source,
-    variant,
     id,
 
     destinationKey:
       destination.destinationKey ||
-      `${camp}:${lang}:${action}`,
+      [
+        utmCampaign,
+        lang,
+        utmTerm
+      ].join(":"),
 
     finalUrl,
 
-    result: "OK",
+    result:
+      "OK",
 
-    detail: ""
+    detail:
+      ""
 
   });
 
 
-  /*
-   * Redirect normal.
-   */
-  window.location.replace(finalUrl);
+  /***************************************************
+   * REDIRECT
+   ***************************************************/
+
+  window.location.replace(
+    finalUrl
+  );
 
 
 
@@ -217,21 +285,46 @@
 
   function findDestination(
     list,
-    camp,
-    lang,
-    action
+    campaign,
+    language,
+    term
   ) {
 
-    return list.find(item =>
+    const campaignNorm =
+      clean(
+        campaign
+      ).toUpperCase();
 
-      clean(item.camp)
-        .toUpperCase() === camp &&
 
-      clean(item.lang)
-        .toUpperCase() === lang &&
+    const languageNorm =
+      clean(
+        language
+      ).toUpperCase();
 
-      clean(item.action)
-        .toLowerCase() === action
+
+    const termNorm =
+      clean(
+        term
+      ).toLowerCase();
+
+
+    return list.find(
+      item =>
+
+        clean(
+          item.utm_campaign
+        ).toUpperCase() ===
+          campaignNorm &&
+
+        clean(
+          item.lang
+        ).toUpperCase() ===
+          languageNorm &&
+
+        clean(
+          item.utm_term
+        ).toLowerCase() ===
+          termNorm
 
     );
 
@@ -240,30 +333,43 @@
 
 
   /***************************************************
-   * CONSTRUIR URL
+   * CONSTRUIR DESTINO
    ***************************************************/
 
-  function buildFinalUrl(destination) {
+  function buildFinalUrl(
+    destination
+  ) {
 
     const type =
-      clean(destination.type)
-        .toUpperCase();
+      clean(
+        destination.type
+      ).toUpperCase();
+
 
     const base =
-      clean(destination.url);
+      clean(
+        destination.url
+      );
 
 
     if (!base) {
+
       return "";
+
     }
 
 
     /*
-     * URL normal
+     * Web normal
      */
-    if (type === "URL") {
 
-      return validateUrl(base);
+    if (
+      type === "URL"
+    ) {
+
+      return validateUrl(
+        base
+      );
 
     }
 
@@ -271,12 +377,16 @@
     /*
      * WhatsApp
      */
-    if (type === "WHATSAPP") {
+
+    if (
+      type === "WHATSAPP"
+    ) {
 
       const text =
         String(
           destination.text || ""
         );
+
 
       return addParam(
         base,
@@ -294,21 +404,21 @@
 
 
   /***************************************************
-   * CONSERVAR UTM
+   * PROPAGAR UTM
    ***************************************************/
 
-  function preserveUtmParameters(url) {
+  function preserveUtmParameters(
+    url
+  ) {
 
     try {
 
       const destinationUrl =
-        new URL(url);
+        new URL(
+          url
+        );
 
 
-      /*
-       * Copiar solamente parámetros
-       * cuyo nombre empiece por utm_.
-       */
       for (
         const [key, value]
         of params.entries()
@@ -317,7 +427,9 @@
         if (
           key
             .toLowerCase()
-            .startsWith("utm_")
+            .startsWith(
+              "utm_"
+            )
         ) {
 
           destinationUrl
@@ -332,7 +444,8 @@
       }
 
 
-      return destinationUrl.toString();
+      return destinationUrl
+        .toString();
 
 
     } catch (_) {
@@ -358,12 +471,16 @@
     try {
 
       const u =
-        new URL(url);
+        new URL(
+          url
+        );
+
 
       u.searchParams.set(
         key,
         value
       );
+
 
       return u.toString();
 
@@ -382,17 +499,18 @@
    * VALIDAR URL
    ***************************************************/
 
-  function validateUrl(url) {
+  function validateUrl(
+    url
+  ) {
 
     try {
 
       const u =
-        new URL(url);
+        new URL(
+          url
+        );
 
 
-      /*
-       * Solo permitimos http / https
-       */
       if (
         u.protocol !== "https:" &&
         u.protocol !== "http:"
@@ -418,30 +536,21 @@
 
   /***************************************************
    * FALLBACK
-   *
-   * IMPORTANTE:
-   *
-   * No modificamos el HTML.
-   *
-   * La pantalla bonita sigue siendo
-   * exactamente la misma.
    ***************************************************/
 
   function startFallback() {
 
     /*
-     * index.html ya tiene:
+     * No cambia la pantalla.
      *
-     * <meta
-     *   http-equiv="refresh"
-     *   content="5;url=https://www.barcelo.com/"
-     * >
+     * El usuario sigue viendo:
      *
-     * Este timeout es una segunda
-     * protección por JavaScript.
+     * Redirigiendo...
+     * Redirecting...
      */
 
     window.setTimeout(
+
       () => {
 
         window.location.replace(
@@ -449,7 +558,9 @@
         );
 
       },
+
       FALLBACK_DELAY
+
     );
 
   }
@@ -457,10 +568,12 @@
 
 
   /***************************************************
-   * LOG EVENTO
+   * LOG
    ***************************************************/
 
-  function logEvent(data) {
+  function logEvent(
+    data
+  ) {
 
     const endpoint =
       clean(
@@ -469,7 +582,9 @@
 
 
     if (!endpoint) {
+
       return;
+
     }
 
 
@@ -482,55 +597,66 @@
       "log"
     );
 
+
     body.set(
-      "camp",
-      data.camp || ""
+      "utm_campaign",
+      data.utmCampaign || ""
     );
+
+
+    body.set(
+      "utm_source",
+      data.utmSource || ""
+    );
+
+
+    body.set(
+      "utm_medium",
+      data.utmMedium || ""
+    );
+
+
+    body.set(
+      "utm_content",
+      data.utmContent || ""
+    );
+
+
+    body.set(
+      "utm_term",
+      data.utmTerm || ""
+    );
+
 
     body.set(
       "lang",
       data.lang || ""
     );
 
-    body.set(
-      "event",
-      data.event || ""
-    );
-
-    body.set(
-      "action",
-      data.action || ""
-    );
-
-    body.set(
-      "source",
-      data.source || ""
-    );
-
-    body.set(
-      "variant",
-      data.variant || ""
-    );
 
     body.set(
       "id",
       data.id || ""
     );
 
+
     body.set(
       "destinationKey",
       data.destinationKey || ""
     );
+
 
     body.set(
       "finalUrl",
       data.finalUrl || ""
     );
 
+
     body.set(
       "result",
       data.result || "OK"
     );
+
 
     body.set(
       "detail",
@@ -543,12 +669,20 @@
       fetch(
         endpoint,
         {
-          method: "POST",
-          mode: "no-cors",
-          keepalive: true,
+          method:
+            "POST",
+
+          mode:
+            "no-cors",
+
+          keepalive:
+            true,
+
           body
         }
-      ).catch(() => {});
+      ).catch(
+        () => {}
+      );
 
 
     } catch (_) {}
@@ -557,11 +691,9 @@
 
 
 
-  /***************************************************
-   * LIMPIAR
-   ***************************************************/
-
-  function clean(value) {
+  function clean(
+    value
+  ) {
 
     return value == null
       ? ""
