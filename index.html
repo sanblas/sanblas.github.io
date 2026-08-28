@@ -14,34 +14,167 @@
     content="noindex,nofollow"
   >
 
-  <!--
-    Fallback:
-    si JavaScript no redirige,
-    después de 5 segundos se envía al usuario a Barceló.
-  -->
+  <!-- Fallback si JavaScript no redirige -->
   <meta
     http-equiv="refresh"
     content="5;url=https://www.barcelo.com/"
   >
 
-  <title>Redirigiendo… || Redirecting…</title>
+  <title>Redirigiendo… / Redirecting…</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 24px;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+      background: #f7f7f5;
+      color: #222;
+    }
+
+    .redirect {
+      width: 100%;
+      max-width: 420px;
+
+      text-align: center;
+
+      padding: 38px 30px;
+
+      background: #ffffff;
+
+      border: 1px solid #e8e8e4;
+      border-radius: 16px;
+
+      box-shadow:
+        0 8px 28px rgba(0, 0, 0, 0.06);
+    }
+
+    .spinner {
+      width: 42px;
+      height: 42px;
+
+      margin: 0 auto 24px;
+
+      border: 4px solid #e5e5e5;
+      border-top-color: #333;
+
+      border-radius: 50%;
+
+      animation: spin 0.8s linear infinite;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    p {
+      margin: 0;
+
+      font-size: 15px;
+      line-height: 1.6;
+
+      color: #666;
+    }
+
+    .divider {
+      width: 36px;
+      height: 1px;
+
+      margin: 20px auto;
+
+      background: #ddd;
+    }
+
+    .fallback {
+      margin-top: 18px;
+
+      font-size: 13px;
+      color: #888;
+    }
+
+    a {
+      color: #333;
+      font-weight: 600;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .spinner {
+        animation: none;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-  <p>
-    Redirigiendo… || Redirecting…
-  </p>
+  <main class="redirect">
 
-  <noscript>
-  <p>
-    Si la página no continúa automáticamente /
-    If the page does not continue automatically,
-    <a href="https://www.barcelo.com/">
-      pulse aquí / click here
-    </a>.
-  </p>
-</noscript>
+    <div
+      class="spinner"
+      aria-hidden="true"
+    ></div>
+
+    <h1>
+      Redirigiendo…
+    </h1>
+
+    <p>
+      Te estamos llevando a tu destino.
+    </p>
+
+    <div class="divider"></div>
+
+    <h1>
+      Redirecting…
+    </h1>
+
+    <p>
+      We are taking you to your destination.
+    </p>
+
+    <noscript>
+      <p class="fallback">
+        Si la página no continúa automáticamente /
+        If the page does not continue automatically,
+        <a href="https://www.barcelo.com/">
+          pulsa aquí / click here
+        </a>.
+      </p>
+    </noscript>
+
+  </main>
 
   <script src="./config.js"></script>
   <script src="./tracker.js"></script>
