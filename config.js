@@ -5,7 +5,7 @@
 window.SERPOAN_CONFIG = {
   "appsScriptUrl": "https://script.google.com/macros/s/AKfycbz3N01x7eP1km7SNnCwou0VAn26p82i8DQXoyOVweAVSTD4vuEGd4NnycdfGSgjF3wv/exec",
   "fallbackUrl": "https://www.barcelo.com/",
-  "generatedAt": "2026-08-29T15:11:17.845Z",
+  "generatedAt": "2026-08-29T15:13:07.930Z",
   "version": "2.0.0",
   "destinations": [
     {
@@ -39,6 +39,14 @@ window.SERPOAN_CONFIG = {
       "type": "URL",
       "url": "https://g.page/r/CVTQcvB21pNtEAE/review",
       "destinationKey": "REVIEW_TUNNEL_GOOGLE"
+    },
+    {
+      "utm_campaign": "REVIEW26",
+      "lang": "ES",
+      "utm_term": "reserva",
+      "type": "URL",
+      "url": "https://g.page/r/CXsX6bxGUciAEAE/review",
+      "destinationKey": "REVIEW_RESERVA_GOOGLE"
     }
   ]
 };
