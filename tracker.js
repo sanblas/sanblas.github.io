@@ -24,6 +24,21 @@
 
 
   /***************************************************
+   * PARÁMETROS PERMITIDOS HACIA EL DESTINO
+   *
+   * Además de las UTM, estos parámetros pueden
+   * propagarse expresamente al destino final.
+   *
+   * IMPORTANTE:
+   * id y lang NO se propagan.
+   ***************************************************/
+
+  const FORWARD_PARAMS = [
+    "entry.1583904262"
+  ];
+
+
+  /***************************************************
    * UTM
    ***************************************************/
 
@@ -213,12 +228,19 @@
 
 
   /***************************************************
-   * PROPAGAR TODAS LAS UTM
+   * PROPAGAR PARÁMETROS
    *
-   * SOLO URL normal.
+   * SOLO destinos de tipo URL.
    *
-   * id NO se propaga.
-   * lang NO se propaga.
+   * Se propagan:
+   * - todos los utm_*
+   * - parámetros expresamente autorizados
+   *   en FORWARD_PARAMS
+   *
+   * NO se propagan:
+   * - id
+   * - lang
+   * - ningún otro parámetro no autorizado
    ***************************************************/
 
   if (
@@ -229,7 +251,7 @@
   ) {
 
     finalUrl =
-      preserveUtmParameters(
+      preserveAllowedParameters(
         finalUrl
       );
 
@@ -404,10 +426,10 @@
 
 
   /***************************************************
-   * PROPAGAR UTM
+   * PROPAGAR PARÁMETROS AUTORIZADOS
    ***************************************************/
 
-  function preserveUtmParameters(
+  function preserveAllowedParameters(
     url
   ) {
 
@@ -424,12 +446,25 @@
         of params.entries()
       ) {
 
+        const keyLower =
+          key.toLowerCase();
+
+
+        const isUtm =
+          keyLower.startsWith(
+            "utm_"
+          );
+
+
+        const isExplicitlyAllowed =
+          FORWARD_PARAMS.includes(
+            key
+          );
+
+
         if (
-          key
-            .toLowerCase()
-            .startsWith(
-              "utm_"
-            )
+          isUtm ||
+          isExplicitlyAllowed
         ) {
 
           destinationUrl
@@ -691,6 +726,10 @@
 
 
 
+  /***************************************************
+   * LIMPIAR
+   ***************************************************/
+
   function clean(
     value
   ) {
@@ -700,5 +739,6 @@
       : String(value).trim();
 
   }
+
 
 })();
