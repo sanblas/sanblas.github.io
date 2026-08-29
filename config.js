@@ -5,7 +5,7 @@
 window.SERPOAN_CONFIG = {
   "appsScriptUrl": "https://script.google.com/macros/s/AKfycbz3N01x7eP1km7SNnCwou0VAn26p82i8DQXoyOVweAVSTD4vuEGd4NnycdfGSgjF3wv/exec",
   "fallbackUrl": "https://www.barcelo.com/",
-  "generatedAt": "2026-08-29T11:03:35.541Z",
+  "generatedAt": "2026-08-29T15:11:17.845Z",
   "version": "2.0.0",
   "destinations": [
     {
@@ -31,6 +31,14 @@ window.SERPOAN_CONFIG = {
       "type": "URL",
       "url": "https://docs.google.com/forms/d/e/1FAIpQLSe1UxO48Kh6TE_OdP64QBcsXivpfC0hX93GYGOLzKUyBZkayw/viewform",
       "destinationKey": "CONSENT_ES"
+    },
+    {
+      "utm_campaign": "REVIEW26",
+      "lang": "ES",
+      "utm_term": "tunel",
+      "type": "URL",
+      "url": "https://g.page/r/CVTQcvB21pNtEAE/review",
+      "destinationKey": "REVIEW_TUNNEL_GOOGLE"
     }
   ]
 };
