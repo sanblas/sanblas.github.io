@@ -5,7 +5,7 @@
 window.SERPOAN_CONFIG = {
   "appsScriptUrl": "https://script.google.com/macros/s/AKfycbz3N01x7eP1km7SNnCwou0VAn26p82i8DQXoyOVweAVSTD4vuEGd4NnycdfGSgjF3wv/exec",
   "fallbackUrl": "https://www.barcelo.com/",
-  "generatedAt": "2026-09-01T16:36:58.328Z",
+  "generatedAt": "2026-09-01T16:38:16.133Z",
   "version": "2.0.0",
   "destinations": [
     {
@@ -47,6 +47,46 @@ window.SERPOAN_CONFIG = {
       "type": "URL",
       "url": "https://g.page/r/CXsX6bxGUciAEAE/review",
       "destinationKey": "REVIEW_RESERVA_GOOGLE"
+    },
+    {
+      "utm_campaign": "CTA_DOSSIER_EDU26",
+      "lang": "ES",
+      "utm_term": "acepta",
+      "type": "URL",
+      "url": "https://sanblas.github.io/emails/dossierEducativoCurso2627.pdf",
+      "destinationKey": "CTA_DOSSIER26_ACCEPT"
+    },
+    {
+      "utm_campaign": "CTA_DOSSIER_EDU26",
+      "lang": "ES",
+      "utm_term": "solo_dossier",
+      "type": "URL",
+      "url": "https://sanblas.github.io/emails/dossierEducativoCurso2627.pdf",
+      "destinationKey": "CTA_DOSSIER26_ONLY"
+    },
+    {
+      "utm_campaign": "PREFERENCIAS_URL_EDU",
+      "lang": "ES",
+      "utm_term": "preferencias",
+      "type": "URL",
+      "url": "https://docs.google.com/forms/d/e/1FAIpQLSe1UxO48Kh6TE_OdP64QBcsXivpfC0hX93GYGOLzKUyBZkayw/viewform?usp=pp_url&entry.159430785=Elegir+o+actualizar+mis+preferencias+de+comunicaci%C3%B3n&entry.719689052=Centro+educativo+/+docente",
+      "destinationKey": "PREFERENCIAS_URL"
+    },
+    {
+      "utm_campaign": "BAJA_URL_EDU",
+      "lang": "ES",
+      "utm_term": "baja",
+      "type": "URL",
+      "url": "https://docs.google.com/forms/d/e/1FAIpQLSe1UxO48Kh6TE_OdP64QBcsXivpfC0hX93GYGOLzKUyBZkayw/viewform?usp=pp_url&entry.159430785=Dejar+de+recibir+comunicaciones+de+San+Blas+Reserva+Ambiental&entry.719689052=Centro+educativo+/+docente&entry.116842334=S%C3%AD,+quiero+dejar+de+recibir+comunicaciones.",
+      "destinationKey": "BAJA_URL"
+    },
+    {
+      "utm_campaign": "COLEGIOS26",
+      "lang": "ES",
+      "utm_term": "ver_online",
+      "type": "URL",
+      "url": "https://sanblas.github.io/emails/correoEducativoInicioCurso2627.html",
+      "destinationKey": "COLEGIOS26_WEBVIEW"
     }
   ]
 };
