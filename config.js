@@ -5,7 +5,7 @@
 window.SERPOAN_CONFIG = {
   "appsScriptUrl": "https://script.google.com/macros/s/AKfycbz3N01x7eP1km7SNnCwou0VAn26p82i8DQXoyOVweAVSTD4vuEGd4NnycdfGSgjF3wv/exec",
   "fallbackUrl": "https://www.barcelo.com/",
-  "generatedAt": "2026-09-10T04:39:38.497Z",
+  "generatedAt": "2026-09-10T11:15:05.303Z",
   "version": "2.0.0",
   "destinations": [
     {
